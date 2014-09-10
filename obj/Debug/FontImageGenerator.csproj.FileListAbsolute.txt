@@ -1,0 +1,7 @@
+C:\Users\Emre\Documents\Visual Studio 2013\Projects\FontImageGenerator\bin\Debug\FontToImage.exe.config
+C:\Users\Emre\Documents\Visual Studio 2013\Projects\FontImageGenerator\bin\Debug\FontToImage.exe
+C:\Users\Emre\Documents\Visual Studio 2013\Projects\FontImageGenerator\bin\Debug\FontToImage.pdb
+C:\Users\Emre\Documents\Visual Studio 2013\Projects\FontImageGenerator\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Emre\Documents\Visual Studio 2013\Projects\FontImageGenerator\obj\Debug\FontImageGenerator.csprojResolveAssemblyReference.cache
+C:\Users\Emre\Documents\Visual Studio 2013\Projects\FontImageGenerator\obj\Debug\FontToImage.exe
+C:\Users\Emre\Documents\Visual Studio 2013\Projects\FontImageGenerator\obj\Debug\FontToImage.pdb
