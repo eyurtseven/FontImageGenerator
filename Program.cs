@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace FontImageGenerator
 {
@@ -18,6 +19,7 @@ namespace FontImageGenerator
 
             Console.ForegroundColor = ConsoleColor.Green;
             var path = string.Format(@"{0}\fonts\", new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory);//Server.MapPath("~/fonts/custom/");
+            //var path = @"C:\Users\Emre\Downloads\10000 Huge Collection of Fonts - Honest\FreeBestFonts";
             var fontList = GetFontFiles(path);
 
             //GenerateFontHeaderImage(fontList);
@@ -26,7 +28,7 @@ namespace FontImageGenerator
         }
 
         private static void GeneratePoster(List<string> fontFiles)
-        { 
+        {
             var fontList = new List<FontInfo>();
 
             if (ExistFontList != null)
@@ -56,7 +58,7 @@ namespace FontImageGenerator
                 {
                     continue;
                 }
-                
+
                 var f = new Font(font, 14);
                 var bmp = new Bitmap(600, 600);
                 Graphics graphic = Graphics.FromImage(bmp);
@@ -115,7 +117,8 @@ namespace FontImageGenerator
                     Directory.CreateDirectory(fi.Directory.FullName);
                 }
 
-                bmp.Save(posterFileName, ImageFormat.Png);
+                //bmp.Save(posterFileName, ImageFormat.Png);
+                SaveImage(posterFileName, bmp);
 
                 var headerImageName = string.Format("{0}_header.png", font.Name.Replace(" ", "_"));
                 var headerFileName = string.Format(@"{0}\img\{1}", new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory, headerImageName);
@@ -151,8 +154,8 @@ namespace FontImageGenerator
                     Directory.CreateDirectory(fi.Directory.FullName);
                 }
 
-                bmp.Save(headerFileName, System.Drawing.Imaging.ImageFormat.Png);
-
+                //bmp.Save(headerFileName, System.Drawing.Imaging.ImageFormat.Png);
+                SaveImage(headerFileName, bmp);
 
                 var otherImageName = string.Format("{0}_other.png", font.Name.Replace(" ", "_"));
                 var otherFileName = string.Format(@"{0}\img\{1}", new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Directory, otherImageName);
@@ -188,15 +191,15 @@ namespace FontImageGenerator
                     Directory.CreateDirectory(fi.Directory.FullName);
                 }
 
-                bmp.Save(otherFileName, System.Drawing.Imaging.ImageFormat.Png);
-
+                //bmp.Save(otherFileName, System.Drawing.Imaging.ImageFormat.Png);
+                SaveImage(otherFileName, bmp);
 
                 var fontInfo = new FontInfo();
                 fontInfo.FontName = font.Name;
                 fontInfo.CreatedDate = DateTime.Now;
 
                 var y = tupleFonts.FirstOrDefault(x => x.Item1.Substring(0, x.Item1.Length - 3) == font.Name);
-                fontInfo.FontFile = new FileInfo(fontFiles[index]).Name; 
+                fontInfo.FontFile = new FileInfo(fontFiles[index]).Name;
 
                 var fontImageInfo = new FontImageInfo();
                 fontImageInfo.ImageType = "poster";
@@ -216,9 +219,7 @@ namespace FontImageGenerator
                 fontInfo.FontImageInfo.Add(fontImageInfo);
 
                 fontList.Add(fontInfo);
-
-
-                ++index;
+                 
             }
 
             var jsonData = JsonConvert.SerializeObject(fontList.OrderByDescending(x => x.CreatedDate).ToList(), Formatting.Indented);
@@ -269,7 +270,7 @@ namespace FontImageGenerator
 
 
                 var jsonText = File.ReadAllText(filePath);
-                var jsonData = JsonConvert.DeserializeObject<List<FontInfo>>(jsonText); 
+                var jsonData = JsonConvert.DeserializeObject<List<FontInfo>>(jsonText);
 
                 return jsonData;
             }
@@ -333,8 +334,8 @@ namespace FontImageGenerator
                 Directory.CreateDirectory(fi.Directory.FullName);
             }
 
-            bmp.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
-            Console.WriteLine(string.Format("{0} created", fileName));
+            //bmp.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
+            SaveImage(fileName, bmp);
             graphic.Clear(Color.LightSlateGray);
 
         }
@@ -349,6 +350,25 @@ namespace FontImageGenerator
             retVal.AddRange(fileInfo.Select(x => string.Format("{1}", path, x.FullName)));
 
             return retVal;
+        }
+
+        private static void SaveImage(string path, Image img, int quality = 100)
+        {
+            var qualityParam = new EncoderParameter(Encoder.Quality, quality);
+
+            var jpegCodec = GetEncoderInfo("image/png");
+
+            var encoderParams = new EncoderParameters(1);
+            encoderParams.Param[0] = qualityParam;
+
+            img.Save(path, jpegCodec, encoderParams);
+
+        }
+
+        private static ImageCodecInfo GetEncoderInfo(string mimeType)
+        {
+            var codecs = ImageCodecInfo.GetImageEncoders();
+            return codecs.FirstOrDefault(t => t.MimeType == mimeType);
         }
 
     }
